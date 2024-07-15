@@ -1,8 +1,6 @@
 from typing import Any, List
 
-import numpy as np
-
-from handler import Handler
+from handlers.handler import Handler
 
 
 class Analytics:
@@ -15,7 +13,7 @@ class Analytics:
         """Метод для добавления обработчиков"""
         self.__handlers.append(handler)
 
-    def process_frame(self, frame: np.ndarray) -> Any:
+    def process_frame(self, frame: str) -> Any:
         """Метод для обработки кадров"""
         data: Any = frame
         for handler in self.__handlers:
