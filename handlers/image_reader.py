@@ -5,6 +5,7 @@ from .handler import Handler
 
 
 class ImageDirectoryReader(Handler):
+    """Обработчик предназначен для чтения изображений"""
     def handle(self, image_path: str) -> np.ndarray:
         img: np.ndarray = cv2.imread(r'{}'.format(image_path))
         if img is None:
