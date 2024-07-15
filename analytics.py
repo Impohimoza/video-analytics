@@ -25,7 +25,7 @@ class Analytics:
     def on_start(self) -> None:
         """Метод для инициализации всех обработчиков"""
         for handler in self.__handlers:
-            handler.on_start
+            handler.on_start()
 
     def on_exit(self) -> None:
         """Метод для освобождения инициализированных ресурсов"""
