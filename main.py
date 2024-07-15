@@ -1,13 +1,15 @@
 import argparse
+from typing import Any
 
 from handlers.image_reader import ImageDirectoryReader
+from handlers.image_preprocessor import PreProcessor
 from analytics import Analytics
 
 
 def main(img: str):
-    handlers = [ImageDirectoryReader(),]
+    handlers = [ImageDirectoryReader(), PreProcessor()]
     analytic = Analytics(handlers)
-    print(type(analytic.process_frame(img)))
+    result = analytic.process_frame(img)
 
 
 if __name__ == '__main__':
