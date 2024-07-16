@@ -1,30 +1,15 @@
-from dataclasses import dataclass
 from typing import Any, Tuple, List
 
 import numpy as np
 import cv2
 
 from .handler import Handler
-
-
-@dataclass
-class Detection:
-    absolute_box: Tuple[int, int, int, int]
-    relative_box: Tuple[float, float, float, float]
-    score: float
-    label_as_int: int
-    label_as_str: str
-
-
-@dataclass
-class ImageDetection:
-    """Класс для изображений и Bounding boxes"""
-    img: np.ndarray
-    detections: List[Detection]
+from .models import Detection, ImageDetection
 
 
 class PostProcessor(Handler):
-    """Обработчик, который отвечает за парсинг “сырых“ результатов модели детекции"""
+    """Обработчик, который отвечает за парсинг
+    “сырых“ результатов модели детекции"""
     def __init__(self, confidence: float = 0.5) -> None:
         self.confidence: float = confidence
 
@@ -33,6 +18,7 @@ class PostProcessor(Handler):
 
         detections: List[Detection] = []
         img: np.ndarray = cv2.cvtColor(detection.ims[0], cv2.COLOR_RGB2BGR)
+        img = img / 255
         for det in filtered_results:
             x1, y1, x2, y2, conf, clss = det
             score: float = conf.item()

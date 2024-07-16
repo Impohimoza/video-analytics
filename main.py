@@ -2,7 +2,7 @@ import argparse
 from typing import List
 
 from handlers.handler import Handler
-from handlers.image_reader import ImageDirectoryReader
+from handlers.image_reader import ImageReader
 from handlers.image_preprocessor import PreProcessor
 from handlers.detector import Detector
 from handlers.post_processor import PostProcessor
@@ -13,7 +13,7 @@ from analytics import Analytics
 
 def main(img: str,  confidence: float):
     handlers: List[Handler] = [
-        ImageDirectoryReader(),
+        ImageReader(),
         PreProcessor(),
         Detector(),
         PostProcessor(confidence=confidence),
