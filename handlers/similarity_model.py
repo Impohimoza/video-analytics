@@ -24,9 +24,7 @@ class SimilarityModelHandler(Handler):
 
     def handle(self, img_detect: ImageDetection) -> Any:
         """Метод для нахождения embeddings для всех блюд на изображении"""
-        transform = transforms.Compose([
-            transforms.ToTensor()
-        ])
+        transform = transforms.Compose([transforms.ToTensor()])
         for detection in img_detect.detections:
             x1, y1, x2, y2 = detection.absolute_box
             img: np.ndarray = img_detect.img[y1:y2, x1:x2]
