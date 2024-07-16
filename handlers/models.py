@@ -14,6 +14,9 @@ class Detection:
     score: float
     label_as_int: int
     label_as_str: str
+    vector_img: Tensor = None
+    type: str = None
+    etalon_score: float = 0.0
 
 
 @dataclass
@@ -21,9 +24,13 @@ class ImageDetection:
     """Класс для изображений и Bounding boxes"""
     img: np.ndarray
     detections: List[Detection]
-    vector_img: Tensor = None
-    type: str = None
-    score: float = None
+
+
+@dataclass
+class EtalonVector:
+    """Класс для эталона и его вектора"""
+    label: str
+    vector: Tensor
 
 
 class Net(nn.Module):

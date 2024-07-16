@@ -11,13 +11,13 @@ class Painter(Handler):
         img: np.ndarray = detections.img
         for detection in detections.detections:
             x1, y1, x2, y2 = detection.absolute_box
-            label: str = detection.label_as_str
-            score: float = detection.score
+            label: str = detection.type[0:-4]
+            score: float = detection.etalon_score
 
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
             cv2.putText(
                 img,
-                f'{label} {score:.2%}',
+                f'{label} {score:.2f}%',
                 (x1, y1 - 10),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.9,

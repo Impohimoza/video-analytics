@@ -9,29 +9,35 @@ from handlers.post_processor import PostProcessor
 from handlers.painter import Painter
 from handlers.visualizer import Visualizer
 from handlers.similarity_model import SimilarityModelHandler
+from handlers.embedding_lookup import EmbeddingLookupHandler
 from analytics import Analytics
 
 
-def main(img: str,  confidence: float):
+def main(img: str, etalon_dir: str, confidence: float):
     handlers: List[Handler] = [
         ImageReader(),
         PreProcessor(),
         Detector(),
         PostProcessor(confidence=confidence),
+        SimilarityModelHandler(),
+        EmbeddingLookupHandler(etalon_dir),
         Painter(),
-        Visualizer(),
-        SimilarityModelHandler()
+        Visualizer()
         ]
     analytic: Analytics = Analytics(handlers)
     analytic.on_start()
-    result = analytic.process_frame(img)
-    print(result.vector_img)
+    analytic.process_frame(img)
     analytic.on_exit()
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='video-analytics')
     parser.add_argument('image_path', type=str, help='Path to the image')
+    parser.add_argument(
+        'etalon_dir',
+        type=str,
+        help='Path to the etalon img dir'
+    )
     parser.add_argument(
         '--confidence',
         type=float,
@@ -40,4 +46,4 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
-    main(args.image_path, args.confidence)
+    main(args.image_path, args.etalon_dir, args.confidence)

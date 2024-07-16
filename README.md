@@ -29,7 +29,7 @@
 
 1. Запустите `main.py`:
     ```sh
-    python main.py path/to/your/image.jpg --confidence 0.5
+    python main.py path/to/your/image.jpg path/to/etalon --confidence 0.5
     # Если не указать --confidence, то значение будет 0.5
     ```
 

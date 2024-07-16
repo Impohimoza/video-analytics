@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 from .handler import Handler
-from .models import Detection, ImageDetection
+from .models import ImageDetection, Detection
 
 
 class PostProcessor(Handler):
