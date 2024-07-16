@@ -61,4 +61,4 @@ class EmbeddingLookupHandler(Handler):
 
     def on_exit(self, *args, **kwargs) -> None:
         """Метод для освобождения инициализированных ресурсов"""
-        return super().on_exit(*args, **kwargs)
+        self.__etalon_vectors = []
