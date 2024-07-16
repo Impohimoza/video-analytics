@@ -8,6 +8,7 @@ from handlers.detector import Detector
 from handlers.post_processor import PostProcessor
 from handlers.painter import Painter
 from handlers.visualizer import Visualizer
+from handlers.similarity_model import SimilarityModelHandler
 from analytics import Analytics
 
 
@@ -18,11 +19,13 @@ def main(img: str,  confidence: float):
         Detector(),
         PostProcessor(confidence=confidence),
         Painter(),
-        Visualizer()
+        Visualizer(),
+        SimilarityModelHandler()
         ]
     analytic: Analytics = Analytics(handlers)
     analytic.on_start()
-    analytic.process_frame(img)
+    result = analytic.process_frame(img)
+    print(result.vector_img)
     analytic.on_exit()
 
 

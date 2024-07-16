@@ -24,4 +24,4 @@ class Painter(Handler):
                 (0, 255, 0),
                 2
             )
-        return img
+        return detections
