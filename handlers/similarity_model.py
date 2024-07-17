@@ -2,10 +2,31 @@ from typing import Any
 
 import torch
 from torchvision import transforms
-import numpy as np
+import torch.nn as nn
+import torchvision.models as models
 
 from .handler import Handler
-from .models import Net, ImageDetection
+from .models import ImageDetection
+
+
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.resnet = models.resnet18(pretrained=True)
+        for param in self.resnet.parameters():
+            param.requires_grad = False
+
+        num_ftrs = self.resnet.fc.in_features
+        self.resnet.fc = nn.Sequential(
+            nn.Linear(num_ftrs, 256),
+            nn.ReLU(),
+            nn.Dropout(0.4),
+            nn.Linear(256, 64)
+        )
+
+    def forward(self, x):
+        x = self.resnet(x)
+        return x
 
 
 class SimilarityModelHandler(Handler):
@@ -26,11 +47,9 @@ class SimilarityModelHandler(Handler):
         """Метод для нахождения embeddings для всех блюд на изображении"""
         transform = transforms.Compose([transforms.ToTensor()])
         for detection in img_detect.detections:
-            x1, y1, x2, y2 = detection.absolute_box
-            img: np.ndarray = img_detect.img[y1:y2, x1:x2]
-
-            img_tensor: torch.Tensor = transform(img).unsqueeze(0)
-            detection.vector_img = self.model(img_tensor)
+            img_tensor: torch.Tensor = transform(detection.crop).unsqueeze(0)
+            result: torch.Tensor = self.model(img_tensor)
+            detection.embedding = result.cpu().detach().numpy()
         return img_detect
 
     def on_exit(self) -> None:

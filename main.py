@@ -13,14 +13,14 @@ from handlers.embedding_lookup import EmbeddingLookupHandler
 from analytics import Analytics
 
 
-def main(img: str, etalon_dir: str, confidence: float):
+def main(img: str, etalon_embedding: str, etalon_type: str, confidence: float):
     handlers: List[Handler] = [
         ImageReader(),
         PreProcessor(),
         Detector(),
         PostProcessor(confidence=confidence),
         SimilarityModelHandler(),
-        EmbeddingLookupHandler(etalon_dir),
+        EmbeddingLookupHandler(etalon_embedding, etalon_type),
         Painter(),
         Visualizer()
         ]
@@ -34,9 +34,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='video-analytics')
     parser.add_argument('image_path', type=str, help='Path to the image')
     parser.add_argument(
-        'etalon_dir',
+        'etalon_embedding',
         type=str,
-        help='Path to the etalon img dir'
+        help='Path to the etalon embeddings'
+    )
+    parser.add_argument(
+        'etalon_type',
+        type=str,
+        help='Path to the etalon type'
     )
     parser.add_argument(
         '--confidence',
@@ -46,4 +51,9 @@ if __name__ == '__main__':
     )
 
     args = parser.parse_args()
-    main(args.image_path, args.etalon_dir, args.confidence)
+    main(
+        args.image_path,
+        args.etalon_embedding,
+        args.etalon_type,
+        args.confidence
+    )

@@ -1,59 +1,42 @@
 from typing import List
 from pathlib import Path
-import os
 
-import cv2
-import torch
-from torchvision import transforms
 import numpy as np
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
 
 from .handler import Handler
-from .models import EtalonVector, Net, ImageDetection
+from .models import EtalonVector, ImageDetection
 
 
 class EmbeddingLookupHandler(Handler):
     """Обработчик для классификации и
     оценивания схожести с эталонной сервировкой"""
-    def __init__(self, etalon_dir: str) -> None:
-        if not Path(etalon_dir).is_dir:
-            raise AttributeError(f'Unable to open dir {etalon_dir}')
-        self.__etalon_dir: str = etalon_dir
+    def __init__(self, embedding_path: str, type_path: str) -> None:
+        if not Path(embedding_path).is_dir or not Path(type_path):
+            raise AttributeError(f'Unable to open path {embedding_path}')
+        self.__embedding_path: str = embedding_path
+        self.__type_path: str = type_path
         self.__etalon_vectors: List[EtalonVector] = []
 
     def on_start(self) -> None:
-        """Метод для инициализации компонента
-        загрузки векторов эталонных блюд"""
-        net = Net()
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        net.load_state_dict(torch.load(
-            r"models\trained_model.pth",
-            map_location=device
-        ))
-        transform = transforms.Compose([
-                transforms.ToTensor()
-        ])
+        """Метод для загрузки векторов эталонных блюд"""
+        etalon_embeddings: np.ndarray = np.load(self.__embedding_path)
+        types: pd.DataFrame = pd.read_csv(self.__type_path)
 
-        for name in os.listdir(self.__etalon_dir):
-            img: np.ndarray = cv2.imread(os.path.join(self.__etalon_dir, name))
-            img_tensor: torch.Tensor = transform(img).unsqueeze(0)
-            vector: torch.Tensor = net(img_tensor)
-            self.__etalon_vectors.append(EtalonVector(name, vector))
-
-    @staticmethod
-    def cosine_similarity(embedding1, embedding2) -> float:
-        """Метод для нахождения Cosine similarity"""
-        cos_sim = torch.nn.functional.cosine_similarity(embedding1, embedding2)
-        cos_sim = cos_sim.mean().item() * 100
-        return cos_sim
+        for i, type in enumerate(types['Type']):
+            etalon_vector = EtalonVector(type, etalon_embeddings[i])
+            self.__etalon_vectors.append(etalon_vector)
 
     def handle(self, img_detect: ImageDetection) -> ImageDetection:
         """Метод для классификации и оценки схожести с эталоном"""
         for detection in img_detect.detections:
             for etalon_vec in self.__etalon_vectors:
-                score: float = self.cosine_similarity(
-                    detection.vector_img,
+                score: np.ndarray = cosine_similarity(
+                    detection.embedding,
                     etalon_vec.vector
                 )
+                score = score.item() * 100
                 if score > detection.etalon_score:
                     detection.type = etalon_vec.label
                     detection.etalon_score = score

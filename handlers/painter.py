@@ -11,7 +11,7 @@ class Painter(Handler):
         img: np.ndarray = detections.img
         for detection in detections.detections:
             x1, y1, x2, y2 = detection.absolute_box
-            label: str = detection.type[0:-4]
+            label: str = detection.type
             score: float = detection.etalon_score
 
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
