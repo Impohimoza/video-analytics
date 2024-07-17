@@ -1,7 +1,6 @@
 from typing import Any
 
 import torch
-from torchvision import transforms
 import torch.nn as nn
 import torchvision.models as models
 
@@ -45,10 +44,8 @@ class SimilarityModelHandler(Handler):
 
     def handle(self, img_detect: ImageDetection) -> Any:
         """Метод для нахождения embeddings для всех блюд на изображении"""
-        transform = transforms.Compose([transforms.ToTensor()])
         for detection in img_detect.detections:
-            img_tensor: torch.Tensor = transform(detection.crop).unsqueeze(0)
-            result: torch.Tensor = self.model(img_tensor)
+            result: torch.Tensor = self.model(detection.crop)
             detection.embedding = result.cpu().detach().numpy()
         return img_detect
 

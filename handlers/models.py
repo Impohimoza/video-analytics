@@ -2,13 +2,14 @@ from dataclasses import dataclass
 from typing import Tuple, List
 
 import numpy as np
+from torch import Tensor
 
 
 @dataclass
 class Bowl:
     absolute_box: Tuple[int, int, int, int]
     relative_box: Tuple[float, float, float, float]
-    crop: np.ndarray
+    crop: Tensor
     score: float
     label_as_int: int
     label_as_str: str
