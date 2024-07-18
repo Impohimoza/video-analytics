@@ -25,7 +25,7 @@ def main(etalon_dir: str):
         PreProcessor(),
         Detector(),
         PostProcessor(confidence=0.1),
-        PreProcessor(scalefactor=1/255.0, size=(128, 128), swapRB=False),
+        PreProcessor(scalefactor=1/255.0, size=(128, 128), swapRB=True),
         SimilarityModelHandler()
     ]
 
