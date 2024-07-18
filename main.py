@@ -19,7 +19,7 @@ def main(img: str, etalon_embedding: str, etalon_type: str, confidence: float):
         PreProcessor(),
         Detector(),
         PostProcessor(confidence=confidence),
-        PreProcessor(scalefactor=1/255.0, size=(128, 128), swapRB=False),
+        PreProcessor(scalefactor=1/255.0, size=(128, 128), swapRB=True),
         SimilarityModelHandler(),
         EmbeddingLookupHandler(etalon_embedding, etalon_type),
         Painter(),
