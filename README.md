@@ -25,11 +25,14 @@
     ```
 
 ## Использование
-
-
-1. Запустите `main.py`:
+1. Запуск скрипта `etalon_embedding.py` для нахождения эмбеддингов эталонных блюд и их названия
     ```sh
-    python main.py path/to/your/image.jpg --confidence 0.5
+    python etalon_embedding.py path/to/etalon_dir
+    ```
+
+2. Запустите `main.py`:
+    ```sh
+    python main.py path/to/your/image.jpg path/to/etalon_embedding path/to/etalon_type --confidence 0.5
     # Если не указать --confidence, то значение будет 0.5
     ```
 

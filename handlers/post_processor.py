@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 from .handler import Handler
-from .models import Detection, ImageDetection
+from .models import ImageDetection, Bowl
 
 
 class PostProcessor(Handler):
@@ -16,7 +16,7 @@ class PostProcessor(Handler):
     def handle(self, detection: Any) -> ImageDetection:
         filtered_results = detection.pred[0][detection.pred[0][:, -1] == 45]
 
-        detections: List[Detection] = []
+        detections: List[Bowl] = []
         img: np.ndarray = cv2.cvtColor(detection.ims[0], cv2.COLOR_RGB2BGR)
         img = img / 255
         for det in filtered_results:
@@ -36,12 +36,16 @@ class PostProcessor(Handler):
                 x2.item() / img.shape[1],
                 y2.item() / img.shape[0]
             )
+            
+            crop: np.ndarray = img[int(y1):int(y2), int(x1):int(x2)]
+            
             label_as_int: int = int(clss.item())
             label_as_str: str = 'blow'
 
-            detections.append(Detection(
+            detections.append(Bowl(
                 absolute_box,
                 relative_box,
+                crop,
                 score,
                 label_as_int,
                 label_as_str
